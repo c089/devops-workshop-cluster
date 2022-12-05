@@ -18,7 +18,7 @@ grafana_loki_query_instant() {
   #
   curl $CURL_ARGS_API "https://grafana.k3d.localhost/api/ds/query" \
     -H 'content-type: application/json' \
-    -u admin:prom-operator \
+    -u admin:password \
     -H 'origin: https://grafana.k3d.localhost' \
     --data-raw '{
                   "queries": [
@@ -38,7 +38,7 @@ grafana_prometheus_query_instant() {
   #
   curl $CURL_ARGS_API "https://grafana.k3d.localhost/api/ds/query" \
     -H 'content-type: application/json' \
-    -u admin:prom-operator \
+    -u admin:password \
     -H 'origin: https://grafana.k3d.localhost' \
     --data-raw '{
                   "queries": [
@@ -57,7 +57,7 @@ grafana_prometheus_query_instant() {
 grafana_api_call() {
   curl $CURL_ARGS_API "https://grafana.k3d.localhost$1" \
     -H 'content-type: application/json' \
-    -u admin:prom-operator \
+    -u admin:password \
     -H 'origin: https://grafana.k3d.localhost'
 }
 

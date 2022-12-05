@@ -14,3 +14,7 @@ kubeProxy:
   enabled: false
 kubeScheduler:
   enabled: false
+
+grafana:
+  adminUser: admin
+  adminPassword: password

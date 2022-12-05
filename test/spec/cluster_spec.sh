@@ -57,11 +57,30 @@ Describe 'k3d development cluster'
       The result of "http_code()" should equal "200"
     End
 
-    It "created the example repository"
-      When call curl $CURL_ARGS https://gitea.k3d.localhost/developer/hello-service
+    It "imported the service repository"
+      When call curl $CURL_ARGS https://gitea.k3d.localhost/developer/service
       The status should be success
       The result of "http_code()" should equal "200"
     End
+
+    It "imported the deployment repository"
+      When call curl $CURL_ARGS https://gitea.k3d.localhost/developer/deployment
+      The status should be success
+      The result of "http_code()" should equal "200"
+    End
+
+    It "allows us to clone the service repository"
+      When call git clone https://developer:password@gitea.k3d.localhost/developer/service.git $(mktemp -d)
+      The stderr should include "Cloning into"
+      The status should be success
+    End
+
+    It "allows us to clone the deployment repository"
+      When call git clone https://developer:password@gitea.k3d.localhost/developer/deployment.git $(mktemp -d)
+      The stderr should include "Cloning into"
+      The status should be success
+    End
+
   End
 
   Describe "Argo"
