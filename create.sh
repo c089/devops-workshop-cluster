@@ -109,7 +109,7 @@ helm install \
   --values "${CLUSTER_DIR}/argocd-values.yaml"
 kubectl apply -f "${CLUSTER_DIR}/argocd-ingressroute.yaml"
 kubectl patch configmap -n argocd \
-  argocd-rbac-cm --patch-file cluster/argocd-configmap-rbac.yaml
+  argocd-rbac-cm --patch-file ${CLUSTER_DIR}/argocd-configmap-rbac.yaml
 
 # install argo-rollouts
 helm install \
@@ -128,7 +128,7 @@ rm $certfile
 until $(dirname "$0")/argocd-login.sh; do
   sleep 1
 done
-./cluster/argocd-create-workflow-user.sh
+${CLUSTER_DIR}/argocd-create-workflow-user.sh
 
 
 rm ${CLUSTER_DIR}/test/.shellspec-quick.log || true
@@ -140,4 +140,4 @@ ${CLUSTER_DIR}/test.sh
 
 
 echo "🥳 All done. Admin credentials and services:"
-./cluster/show-credentials.sh
+${CLUSTER_DIR}/show-credentials.sh
