@@ -77,8 +77,8 @@ helm upgrade --install --atomic \
   --values "${CLUSTER_DIR}/prometheus-blackbox-exporter-values.yaml" \
   prometheus-blackbox-exporter \
   prometheus-community/prometheus-blackbox-exporter
-
 kubectl apply -f "${CLUSTER_DIR}/prometheus-blackbox-exporter-ingressroute.yaml"
+kubectl apply -f "${CLUSTER_DIR}/grafana-dashboard-blackbox.yaml"
 
 
 kubectl create namespace argo
