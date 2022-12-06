@@ -20,10 +20,17 @@ k3d cluster create \
   --registry-config "$CLUSTER_DIR/local-pullthrough-registries.k3d-registries.yaml" \
   --registry-create registry:0.0.0.0:5000
 
+# install prometheus, alertmanager, grafana
+helm upgrade --install --atomic --create-namespace \
+	--namespace observability \
+  --values "${CLUSTER_DIR}/kube-prometheus-stack-values.yaml" \
+	kube-prometheus-stack prometheus-community/kube-prometheus-stack
+
 # configure traefik
 helm_deploy_status() {
 	helm status -o json -n kube-system traefik 2> /dev/null | jq -j '.info.status'
 }
+
 echo "waiting for traefik..."
 until [[ $(helm_deploy_status) = "deployed" ]]; do
   echo -n "."
@@ -51,14 +58,7 @@ mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.localhost 
 # save it as secret for traefik to find
 kubectl create secret -n kube-system tls tls-default-certificate --cert $certfile --key $keyfile
 
-# install prometheus, alertmanager, grafana
-helm upgrade --install --atomic --create-namespace \
-	--namespace observability \
-  --values "${CLUSTER_DIR}/kube-prometheus-stack-values.yaml" \
-	kube-prometheus-stack prometheus-community/kube-prometheus-stack
-
 kubectl apply -f "${CLUSTER_DIR}/kube-prometheus-stack-ingressroutes.yaml"
-
 # install loki and prommtail
 helm upgrade --install --atomic --create-namespace \
   --values "${CLUSTER_DIR}/loki-stack-values.yaml" \
