@@ -24,5 +24,6 @@ The install script will check if you have all necessary prerequisites installed.
 | Gitea               | https://gitea.k3d.localhost                        | gitea_admin | password |
 | Gitea               | https://gitea.k3d.localhost                        | developer   | password |
 | Prometheus          | https://prometheus.k3d.localhost                   |             |          |
+| Alertmanager        | https://alertmanager.k3d.localhost                 |             |          |
 | Prometheus Blackbox | https://prometheus-blackbox.k3d.localhost          |             |          |
 | Traefik Dashboard   | https://traefik-dashboard.k3d.localhost/dashboard/ |             |          |

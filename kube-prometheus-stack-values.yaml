@@ -4,6 +4,9 @@ prometheus:
     # ref: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#prometheusioscrape
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
+alertmanager:
+  alertmanagerSpec:
+    externalUrl: "https://alertmanager.k3d.localhost"
 
 # These are not exposed by our k3d cluster setup so prometheus alerts would be
 # firing for them. Since the workshop we built this for focuses on deployment,

@@ -125,6 +125,12 @@ Describe 'k3d development cluster'
       The result of "http_code()" should equal "200"
     End
 
+    It "exposes the alertmanager interface"
+      When call curl $CURL_ARGS https://alertmanager.k3d.localhost
+      The status should be success
+      The result of "http_code()" should equal "200"
+    End
+
     It "has ony the watchdog alert firing"
       firing_alerts() {
         env echo "$1" | jq -r '.data.alerts | map(select (.state == "firing" )) | map (.labels.alertname) | join(",")'
