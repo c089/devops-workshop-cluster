@@ -6,3 +6,9 @@ tlsStore:
     defaultCertificate:
       secretName: tls-default-certificate
       
+metrics:
+  prometheus:
+    service:
+      enabled: true
+    serviceMonitor:
+      namespace: "observability"

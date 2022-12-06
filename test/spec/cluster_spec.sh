@@ -146,6 +146,11 @@ Describe 'k3d development cluster'
       The result of "http_code()" should equal "200"
     End
 
+
+    prometheus_targets() {
+      curl $CURL_ARGS_API https://prometheus.k3d.localhost/api/v1/targets | jq -r \
+        '.data.activeTargets[].labels.service'
+    }
     prometheus_blackbox_exporter_scrape_pools() {
       curl $CURL_ARGS_API https://prometheus.k3d.localhost/api/v1/targets | jq -r \
         '.data.activeTargets[] | select (.labels.service == "prometheus-blackbox-exporter") | .scrapePool'
@@ -159,6 +164,11 @@ Describe 'k3d development cluster'
     It "scrapes the hello service"
       When call prometheus_blackbox_exporter_scrape_pools
       The output should include "serviceMonitor/observability/prometheus-blackbox-exporter-hello/0"
+    End
+
+    It "scrapes traefik"
+      When call prometheus_targets
+      The output should include "traefik-metrics"
     End
   End
 
