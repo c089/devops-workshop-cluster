@@ -5,7 +5,14 @@ tlsStore:
   default:
     defaultCertificate:
       secretName: tls-default-certificate
-      
+logs:
+  format: json
+  general:
+    format: json
+    level: INFO
+  access:
+    enabled: true
+    format: json
 metrics:
   prometheus:
     service:
