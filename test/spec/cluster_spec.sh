@@ -211,6 +211,14 @@ Describe 'k3d development cluster'
       The status should be success
       The lines of stdout should equal 0
     End
+
+    It "discovers the workshop dashboard"
+      uid=$(cat ../grafana-dashboard-blackbox.yaml | yq -r '.data["dashboard.json"]'|jq -r '.uid')
+      title() { jq -r '.dashboard.title' ;}
+      When call curl -u admin:password "https://grafana.k3d.localhost/api/dashboards/uid/$uid"
+      The status should be success
+      The result of "title()" should equal "Hello Service Health"
+    End
   End
 
 End
