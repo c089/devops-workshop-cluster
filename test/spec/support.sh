@@ -34,8 +34,6 @@ grafana_loki_query_instant() {
 grafana_prometheus_query_instant() {
   # execute a loki metric query through grafana via an "instant" type query and
   # return the expected singular result
-  # FIXME password static
-  #
   curl $CURL_ARGS_API "https://grafana.k3d.localhost/api/ds/query" \
     -H 'content-type: application/json' \
     -u admin:password \
@@ -50,6 +48,7 @@ grafana_prometheus_query_instant() {
                       "expr": "'$1'"
                     }
                   ],
+                  "from" :"now",
                   "to": "now"
                 }'
 }

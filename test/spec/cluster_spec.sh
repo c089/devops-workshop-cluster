@@ -209,11 +209,10 @@ Describe 'k3d development cluster'
 
     It "can query Prometheus"
       extract_version_label() {
-        env echo -n "$1" | jq -j \
-          '.results.A.frames[0].schema.fields | map(select (.name == "Value")) | first | .labels.version'
+        jq -j  '.results.A.frames[0].schema.fields | map(select (.name == "Value")) | first | .labels.version'
       }
       When call grafana_prometheus_query_instant 'grafana_build_info'
-      The result of "extract_version_label()" should equal "9.2.4"
+      The result of "extract_version_label()" should equal "9.3.0"
     End
 
     It "has its log files aggregated"
