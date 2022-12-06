@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: alertmanager-config-pushover
+  labels:
+    alertmanagerConfig: pushover
+spec:
+  route:
+    groupBy: ['job']
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 12h
+    receiver: 'pushover'
+  receivers:
+  - name: 'pushover'
+    pushoverConfigs:
+    - token:
+        name: 'pushover'
+        key: 'token'
+      userKey: 
+        name: 'pushover'
+        key: 'userkey'
