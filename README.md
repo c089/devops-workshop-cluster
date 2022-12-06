@@ -17,6 +17,7 @@ The install script will check if you have all necessary prerequisites installed.
 | Service             | Endpoint                                           | Username    | Password |
 | ------------------- | -------------------------------------------------- | ----------- | -------- |
 | Grafana             | https://grafana.k3d.localhost                      | admin       | password |
+| Loki (for logcli)   | https://loki.k3d.localhost                         | -           | -        |
 | Argo CD             | https://argocd.k3d.localhost                       | admin       | password |
 | Argo Workflows      | https://argo-workflows.k3d.localhost               | -           | -        |
 | Argo Rollouts       | https://argo-rollouts.k3d.localhost                | -           | -        |
