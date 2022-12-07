@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: traefik-proxy-pod-monitor
+  namespace: observability
+spec:
+  podMetricsEndpoints:
+  - interval: 5s
+    path: /metrics
+    scheme: http
+    port: api
+    scrapeTimeout: 5s
+  namespaceSelector:
+    matchNames:
+    - traefik-mesh
+  selector:
+    matchLabels:
+      app: maesh
+      component: maesh-mesh
+      release: traefik-mesh
+---

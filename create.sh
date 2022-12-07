@@ -83,6 +83,13 @@ kubectl apply -f "${CLUSTER_DIR}/grafana-dashboard-blackbox.yaml"
 
 kubectl create namespace argo
 
+helm upgrade --install --atomic --create-namespace \
+  --namespace traefik-mesh \
+  traefik-mesh \
+  traefik-mesh/traefik-mesh \
+  --values "${CLUSTER_DIR}/traefik-mesh-values.yaml"
+kubectl apply -f "${CLUSTER_DIR}/traefik-mesh-podmonitor.yaml"
+
 # install gitea
 helm upgrade --install --atomic --create-namespace \
   --namespace gitea \

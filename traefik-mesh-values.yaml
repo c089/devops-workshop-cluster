@@ -1,0 +1,16 @@
+controller:
+  logLevel: info
+mesh:
+  logLevel: info
+proxy:
+  resources:
+      limit:
+        mem: 100Mi
+        cpu: 4000m
+      request:
+        mem: 50Mi
+        cpu: 100m
+metrics:
+  deploy: false
+tracing:
+  deploy: false
