@@ -1,2 +1,5 @@
 dashboard:
   enabled: true
+controller:
+  extraArgs:
+    - --traffic-split-api-version=v1alpha3
