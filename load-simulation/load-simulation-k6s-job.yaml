@@ -39,7 +39,7 @@ spec:
       containers:
       - name: k6
         image: grafana/k6
-        args: ["run", "-u", "100", "-d", "1000000h", "--no-summary", "--no-thresholds", "/mnt/scripts/script.js"]
+        args: ["run", "-u", "1000", "-d", "1000000h", "--no-thresholds", "/mnt/scripts/script.js"]
         volumeMounts:
         - mountPath: /mnt/scripts
           name: scripts
