@@ -1,6 +1,22 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
+  name: trafficsplits-manage
+rules:
+- apiGroups:
+  - traefik.containo.us
+  resources:
+  - traefikservices
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
   name: argo-rollouts-traefikservices
 rules:
 - apiGroups:
@@ -19,6 +35,19 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: argo-rollouts-traefikservices
+subjects:
+- kind: ServiceAccount
+  name: argo-rollouts
+  namespace: argo-rollouts
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: argo-rollouts-trafficsplits-manage
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traffiksplits-manage
 subjects:
 - kind: ServiceAccount
   name: argo-rollouts
