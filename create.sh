@@ -84,12 +84,7 @@ kubectl apply -f "${CLUSTER_DIR}/grafana-dashboard-blackbox.yaml"
 kubectl create namespace argo
 
 helm upgrade --install --atomic --create-namespace \
-  --namespace istio-system \
-  istio-base istio/base
-
-helm upgrade --install --atomic \
-  --namespace istio-system \
-  istiod istio/istiod
+  --namespace osm osm osm
 
 # install gitea
 helm upgrade --install --atomic --create-namespace \
