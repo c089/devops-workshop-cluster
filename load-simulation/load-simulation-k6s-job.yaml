@@ -7,7 +7,7 @@ data:
     import http from "k6/http";
     import { sleep } from "k6";
 
-    const API_BASE_URL = 'http://hello-root.default.traefik.mesh';
+    const API_BASE_URL = 'http://hello.default.traefik.mesh';
     const params = {
       headers: {
       }
