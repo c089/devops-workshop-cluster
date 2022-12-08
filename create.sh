@@ -85,6 +85,9 @@ kubectl create namespace argo
 
 helm upgrade --install --atomic --create-namespace \
   --namespace osm osm osm
+osm namespace add kube-system
+osm namespace add default
+kubectl apply -f "${CLUSTER_DIR}/ingressbackend.yaml"
 
 # install gitea
 helm upgrade --install --atomic --create-namespace \
