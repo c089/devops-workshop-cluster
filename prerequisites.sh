@@ -42,7 +42,6 @@ has_helm_repo "prometheus-community" "https://prometheus-community.github.io/hel
 has_helm_repo "grafana" "https://grafana.github.io/helm-charts"
 has_helm_repo "argo" "https://argoproj.github.io/argo-helm"
 has_helm_repo "gitea-charts" "https://dl.gitea.io/charts/"
-has_helm_repo "traefik-mesh" "https://helm.traefik.io/mesh"
 has_helm_repo "osm" "https://openservicemesh.github.io/osm"
 
 if [ "${SHOULD_EXIT_BECAUSE_OF_MISSING_DEPENDENCY}" -ne 0 ];
