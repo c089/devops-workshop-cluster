@@ -3,6 +3,11 @@ serviceMonitor:
   selfMonitor:
     enabled: true
   targets:
+    - name: hello-mesh
+      url: http://hello.default.traefik.mesh/
+      interval: 1s
+      scrapeTimeout: 1s
+      module: http_2xx
     - name: hello
       url: https://host.k3d.internal/
       additionalRelabeling:
