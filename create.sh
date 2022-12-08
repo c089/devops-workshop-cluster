@@ -84,7 +84,7 @@ kubectl apply -f "${CLUSTER_DIR}/grafana-dashboard-blackbox.yaml"
 kubectl create namespace argo
 
 helm upgrade --install --atomic --create-namespace \
-  --namespace osm osm osm
+  --namespace osm-system osm osm/osm
 osm namespace add kube-system
 osm namespace add default
 
