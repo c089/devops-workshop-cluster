@@ -63,16 +63,14 @@ grafana_api_call() {
 query_loki() {
   LOKI_ADDR=https://loki.k3d.localhost/ logcli query --quiet "$1"
 }
-
 run_in_cluster() {
   image="$1"; shift;
+  smoke_test_pod="cluster-smoke-test-$(date +%s)"
   kubectl run \
-    --rm \
-    --wait \
-    --attach \
     --restart=Never \
     --image "${image}" \
-    --image-pull-policy="IfNotPresent" \
-    smoke-test-$(date +%s) \
-    --command "$@"
+    ${smoke_test_pod} \
+    --command sleep infinity
+  kubectl wait --for="condition=Ready" pod ${smoke_test_pod}
+  kubectl exec ${smoke_test_pod} -c ${smoke_test_pod} -- $@
 }
