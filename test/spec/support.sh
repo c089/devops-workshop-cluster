@@ -69,6 +69,7 @@ run_in_cluster() {
   shift;
   shift;
   kubectl run \
+    --annotations="openservicemesh.io/sidecar-injection=enabled" \
     --restart=Never \
     --image "${image}" \
     ${smoke_test_pod} \

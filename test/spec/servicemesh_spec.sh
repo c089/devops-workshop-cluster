@@ -7,7 +7,7 @@ Describe 'Service Mesh'
     kubectl apply -f "$(dirname ${SHELLSPEC_SPECFILE})/servicemesh_fixture.yaml"
     kubectl wait --for=condition=Available deployment servicemesh-spec
 
-    kubectl run --restart=Never --image alpine/curl:3.14 ${CURL_POD} --command sleep infinity
+    kubectl run  --annotations="openservicemesh.io/sidecar-injection=enabled" --restart=Never --image alpine/curl:3.14 ${CURL_POD} --command sleep infinity
     kubectl wait --for=condition=Ready pod ${CURL_POD}
   }
   cleanup() {

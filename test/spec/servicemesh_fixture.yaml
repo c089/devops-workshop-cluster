@@ -44,6 +44,8 @@ spec:
     metadata:
       labels:
         app: servicemesh-spec
+      annotations:
+        'openservicemesh.io/sidecar-injection': 'enabled'
     spec:
       containers:
         - image: traefik/whoami:latest
