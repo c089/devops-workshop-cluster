@@ -22,19 +22,27 @@ Describe 'k3d development cluster'
     End
   End
 
+  Describe "Service Mesh"
+    It "ingress: runs traffic into service mesh"
+      When call curl $CURL_ARGS -w '%header{server} %{http_code}' "https://hello.k3d.localhost"
+      The output should equal "envoy 200"
+    End
+
+    It "service-to-service: allows pods in the default namespace to talk to each other"
+      When call run_in_cluster alpine/curl -- curl $CURL_ARGS -w '%header{server} %{http_code}' "http://hello"
+      The status should be success
+      The output should equal "envoy 200"
+    End
+
+    It "egress: allows pods in the default namespace to talk to external services"
+      When call run_in_cluster alpine/curl -- curl $CURL_ARGS -w '%header{server} %{http_code}' "http://example.com"
+      The status should be success
+      The output should equal "envoy 200"
+    End
+  End
+
   Describe "Private Docker Registry"
     It "is accessible to workloads in the cluster"
-      run_in_cluster() {
-        image="$1"; shift;
-        kubectl run \
-          --rm \
-          --wait \
-          --attach \
-          --restart=Never \
-          --image "${image}" \
-          registry-smoke-test \
-          --command $@
-      }
 
       registry_name="registry"
       local_tag="localhost:5000/busybox:latest"
