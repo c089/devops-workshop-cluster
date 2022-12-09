@@ -20,6 +20,13 @@ k3d cluster create \
   --registry-config "$CLUSTER_DIR/local-pullthrough-registries.k3d-registries.yaml" \
   --registry-create registry:0.0.0.0:5000
 
+# install openservicemesh
+OSM_MESH_NAME="osm"
+helm upgrade --install --atomic --create-namespace \
+  --namespace osm-system osm osm/osm
+kubectl label namespace default "openservicemesh.io/monitored-by=${OSM_MESH_NAME}"
+kubectl label namespace default "openservicemesh.io/sidecar-injection=enabled"
+
 # install prometheus, alertmanager, grafana
 helm upgrade --install --atomic --create-namespace \
 	--namespace observability \
@@ -82,11 +89,6 @@ kubectl apply -f "${CLUSTER_DIR}/grafana-dashboard-blackbox.yaml"
 
 
 kubectl create namespace argo
-
-helm upgrade --install --atomic --create-namespace \
-  --namespace osm-system osm osm/osm
-osm namespace add kube-system
-osm namespace add default
 
 # install gitea
 helm upgrade --install --atomic --create-namespace \
