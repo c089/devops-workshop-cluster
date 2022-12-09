@@ -22,39 +22,13 @@ Describe 'k3d development cluster'
     End
   End
 
-  Describe "Service Mesh"
-    CURL_POD=smoke-test-curl-$(date +%s)
-    setup() {
-      kubectl run --restart=Never --image alpine/curl:3.14 ${CURL_POD} --command sleep infinity
-      kubectl wait --for=condition=Ready pod ${CURL_POD}
-    }
-    cleanup() {
-      kubectl delete pod ${CURL_POD} --wait=false
-    }
-    BeforeAll 'setup'
-    AfterAll 'cleanup'
-
-    It "ingress: runs traffic into service mesh"
-      When call curl -s -I "https://hello.k3d.localhost"
-      The line 1 of output should include "200"
-      The output should include "server: envoy"
-    End
-
-    It "service-to-service: allows pods in the default namespace to talk to each other"
-      When call kubectl exec ${CURL_POD} -c ${CURL_POD} -- curl -s -I "http://hello"
-      The status should be success
-      The output should include "200 OK"
-      The output should include "server: envoy"
-    End
-
-    It "egress: allows pods in the default namespace to talk to external services"
-      When call kubectl exec ${CURL_POD} -c ${CURL_POD} -- curl -s -I "http://example.com"
-      The status should be success
-      The output should include "200 OK"
-    End
-  End
-
   Describe "Private Docker Registry"
+    pod_name=''
+    cleanup() {
+      delete_pod_from_cluster "${pod_name}" || true
+    }
+    After 'cleanup'
+
     It "is accessible to workloads in the cluster"
 
       registry_name="registry"
@@ -65,7 +39,8 @@ Describe 'k3d development cluster'
       docker tag busybox:latest ${local_tag}
       docker push ${local_tag}
 
-      When call run_in_cluster ${cluster_tag} /bin/echo woop!
+      pod_name="cluster-smoke-test-$(date +%s)"
+      When call run_in_cluster ${cluster_tag} "${pod_name}" /bin/echo woop!
       The status should be success
       The output should include "woop!"
     End

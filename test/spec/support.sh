@@ -64,8 +64,10 @@ query_loki() {
   LOKI_ADDR=https://loki.k3d.localhost/ logcli query --quiet "$1"
 }
 run_in_cluster() {
-  image="$1"; shift;
-  smoke_test_pod="cluster-smoke-test-$(date +%s)"
+  image="$1"; 
+  smoke_test_pod="$2";
+  shift;
+  shift;
   kubectl run \
     --restart=Never \
     --image "${image}" \
@@ -73,4 +75,9 @@ run_in_cluster() {
     --command sleep infinity
   kubectl wait --for="condition=Ready" pod ${smoke_test_pod}
   kubectl exec ${smoke_test_pod} -c ${smoke_test_pod} -- $@
+}
+
+delete_pod_from_cluster() {
+  pod="$1"; 
+  kubectl delete ${pod}
 }
