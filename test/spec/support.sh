@@ -80,5 +80,5 @@ run_in_cluster() {
 
 delete_pod_from_cluster() {
   pod="$1"; 
-  kubectl delete ${pod}
+  kubectl delete --wait=false pod ${pod}
 }
