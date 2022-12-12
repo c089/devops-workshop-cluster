@@ -26,6 +26,7 @@ has_helm_repo() {
 	set -e
 }
 
+command_exists "shellspec" "https://github.com/shellspec/shellspec#installation"
 command_exists "docker-compose" "https://docs.docker.com/compose/"
 command_exists "kubectl" "https://kubernetes.io/docs/tasks/tools/"
 command_exists "jq" "https://stedolan.github.io/jq/"
