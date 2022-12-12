@@ -8,7 +8,7 @@ spec:
   tls: {}
   routes:
     - kind: Rule
-      match: Host(`gitea.k3d.localhost`)
+      match: Host(`gitea.k3d.local.profitbricks.net`)
       services:
         - name: gitea-http
           port: 3000

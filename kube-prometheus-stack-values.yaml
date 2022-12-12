@@ -6,7 +6,7 @@ prometheus:
     podMonitorSelectorNilUsesHelmValues: false
 alertmanager:
   alertmanagerSpec:
-    externalUrl: "https://alertmanager.k3d.localhost"
+    externalUrl: "https://alertmanager.k3d.local.profitbricks.net"
 
 # These are not exposed by our k3d cluster setup so prometheus alerts would be
 # firing for them. Since the workshop we built this for focuses on deployment,

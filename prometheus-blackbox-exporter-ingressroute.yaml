@@ -9,7 +9,7 @@ spec:
   tls: {}
   routes:
     - kind: Rule
-      match: Host(`prometheus-blackbox.k3d.localhost`)
+      match: Host(`prometheus-blackbox.k3d.local.profitbricks.net`)
       services:
         - name: prometheus-blackbox-exporter
           port: 9115

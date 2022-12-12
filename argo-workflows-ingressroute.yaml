@@ -9,7 +9,7 @@ spec:
   tls: {}
   routes:
     - kind: Rule
-      match: Host(`argo-workflows.k3d.localhost`)
+      match: Host(`argo-workflows.k3d.local.profitbricks.net`)
       priority: 10
       services:
         - name: argo-workflows-server

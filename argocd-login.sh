@@ -4,6 +4,6 @@ set -euxo pipefail
 
 argocd \
   login \
-  argocd.k3d.localhost \
+  argocd.k3d.local.profitbricks.net \
   --username admin \
   --password password

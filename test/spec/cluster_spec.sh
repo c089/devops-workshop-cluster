@@ -4,19 +4,19 @@ Describe 'k3d development cluster'
 
   Describe "Traefik"
     It "redirects http to https"
-      When call curl $CURL_ARGS -I "http://any-service.k3d.localhost/"
+      When call curl $CURL_ARGS -I "http://any-service.k3d.local.profitbricks.net/"
       The status should be success
-      The result of "redirect_url()" should equal "https://any-service.k3d.localhost/"
+      The result of "redirect_url()" should equal "https://any-service.k3d.local.profitbricks.net/"
     End
 
     It "uses a valid certificate"
-      When call curl ${CURL_ARGS} --no-fail --no-insecure https://any-service.k3d.localhost/
+      When call curl ${CURL_ARGS} --no-fail --no-insecure https://any-service.k3d.local.profitbricks.net/
       The status should be success
       The result of "ssl_verify_result()" should equal ${CURL_SSL_VERIFY_SUCCESS}
     End
 
     It "exposes the Traefik dashboard"
-      When call curl $CURL_ARGS https://traefik-dashboard.k3d.localhost/dashboard/
+      When call curl $CURL_ARGS https://traefik-dashboard.k3d.local.profitbricks.net/dashboard/
       The status should be success
       The result of "http_code()" should equal "200"
     End
@@ -48,31 +48,31 @@ Describe 'k3d development cluster'
 
   Describe "Gitea"
     It "exposes gitea web interface"
-      When call curl $CURL_ARGS https://gitea.k3d.localhost/
+      When call curl $CURL_ARGS https://gitea.k3d.local.profitbricks.net/
       The status should be success
       The result of "http_code()" should equal "200"
     End
 
     It "imported the service repository"
-      When call curl $CURL_ARGS https://gitea.k3d.localhost/developer/service
+      When call curl $CURL_ARGS https://gitea.k3d.local.profitbricks.net/developer/service
       The status should be success
       The result of "http_code()" should equal "200"
     End
 
     It "imported the deployment repository"
-      When call curl $CURL_ARGS https://gitea.k3d.localhost/developer/deployment
+      When call curl $CURL_ARGS https://gitea.k3d.local.profitbricks.net/developer/deployment
       The status should be success
       The result of "http_code()" should equal "200"
     End
 
     It "allows us to clone the service repository"
-      When call git clone https://developer:password@gitea.k3d.localhost/developer/service.git $(mktemp -d)
+      When call git clone https://developer:password@gitea.k3d.local.profitbricks.net/developer/service.git $(mktemp -d)
       The stderr should include "Cloning into"
       The status should be success
     End
 
     It "allows us to clone the deployment repository"
-      When call git clone https://developer:password@gitea.k3d.localhost/developer/deployment.git $(mktemp -d)
+      When call git clone https://developer:password@gitea.k3d.local.profitbricks.net/developer/deployment.git $(mktemp -d)
       The stderr should include "Cloning into"
       The status should be success
     End
@@ -81,19 +81,19 @@ Describe 'k3d development cluster'
 
   Describe "Argo"
     It "exposes the argo-cd interface"
-      When call curl $CURL_ARGS https://argocd.k3d.localhost/
+      When call curl $CURL_ARGS https://argocd.k3d.local.profitbricks.net/
       The status should be success
       The result of "http_code()" should equal "200"
     End
 
     It "exposes the argo-rollouts dashboard"
-      When call curl $CURL_ARGS https://argo-rollouts.k3d.localhost/rollouts/
+      When call curl $CURL_ARGS https://argo-rollouts.k3d.local.profitbricks.net/rollouts/
       The status should be success
       The result of "http_code()" should equal "200"
     End
 
     It "exposes the argo-workflows interface"
-      When call curl $CURL_ARGS https://argo-workflows.k3d.localhost/workflows/
+      When call curl $CURL_ARGS https://argo-workflows.k3d.local.profitbricks.net/workflows/
       The status should be success
       The result of "http_code()" should equal "200"
     End
@@ -116,13 +116,13 @@ Describe 'k3d development cluster'
 
   Describe "Prometheus"
     It "exposes the web interface"
-      When call curl $CURL_ARGS https://prometheus.k3d.localhost/graph
+      When call curl $CURL_ARGS https://prometheus.k3d.local.profitbricks.net/graph
       The status should be success
       The result of "http_code()" should equal "200"
     End
 
     It "exposes the alertmanager interface"
-      When call curl $CURL_ARGS https://alertmanager.k3d.localhost
+      When call curl $CURL_ARGS https://alertmanager.k3d.local.profitbricks.net
       The status should be success
       The result of "http_code()" should equal "200"
     End
@@ -131,24 +131,24 @@ Describe 'k3d development cluster'
       firing_alerts() {
         env echo "$1" | jq -r '.data.alerts | map(select (.state == "firing" )) | map (.labels.alertname) | join(",")'
       }
-      When call curl $CURL_ARGS_API https://prometheus.k3d.localhost/api/v1/alerts
+      When call curl $CURL_ARGS_API https://prometheus.k3d.local.profitbricks.net/api/v1/alerts
       The status should be success
       The result of "firing_alerts()" should equal "Watchdog"
     End
 
     It "exposes the blackbox interface"
-      When call curl $CURL_ARGS https://prometheus-blackbox.k3d.localhost/
+      When call curl $CURL_ARGS https://prometheus-blackbox.k3d.local.profitbricks.net/
       The status should be success
       The result of "http_code()" should equal "200"
     End
 
 
     prometheus_targets() {
-      curl $CURL_ARGS_API https://prometheus.k3d.localhost/api/v1/targets | jq -r \
+      curl $CURL_ARGS_API https://prometheus.k3d.local.profitbricks.net/api/v1/targets | jq -r \
         '.data.activeTargets[].labels.service'
     }
     prometheus_blackbox_exporter_scrape_pools() {
-      curl $CURL_ARGS_API https://prometheus.k3d.localhost/api/v1/targets | jq -r \
+      curl $CURL_ARGS_API https://prometheus.k3d.local.profitbricks.net/api/v1/targets | jq -r \
         '.data.activeTargets[] | select (.labels.service == "prometheus-blackbox-exporter") | .scrapePool'
     }
 
@@ -180,10 +180,10 @@ Describe 'k3d development cluster'
     grafana_datasources() { env echo "$1" | jq -r '.[].uid' ; }
 
     It "exposes the web interface"
-      When call curl $CURL_ARGS https://grafana.k3d.localhost/
+      When call curl $CURL_ARGS https://grafana.k3d.local.profitbricks.net/
       The status should be success
       The result of "http_code()" should equal "302"
-      The result of "redirect_url()" should equal "https://grafana.k3d.localhost/login"
+      The result of "redirect_url()" should equal "https://grafana.k3d.local.profitbricks.net/login"
     End
 
     It "has Loki configured as datasource"
@@ -226,7 +226,7 @@ Describe 'k3d development cluster'
     It "discovers the workshop dashboard"
       uid=$(cat ../grafana-dashboard-blackbox.yaml | yq -r '.data["dashboard.json"]'|jq -r '.uid')
       title() { jq -r '.dashboard.title' ;}
-      When call curl -u admin:password "https://grafana.k3d.localhost/api/dashboards/uid/$uid"
+      When call curl -u admin:password "https://grafana.k3d.local.profitbricks.net/api/dashboards/uid/$uid"
       The status should be success
       The result of "title()" should equal "Hello Service Health"
     End

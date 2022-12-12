@@ -9,7 +9,7 @@ spec:
   tls: {}
   routes:
     - kind: Rule
-      match: Host(`loki.k3d.localhost`)
+      match: Host(`loki.k3d.local.profitbricks.net`)
       services:
         - name: loki-stack
           port: 3100

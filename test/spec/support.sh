@@ -16,10 +16,10 @@ grafana_loki_query_instant() {
   # return the expected singular result
   # FIXME password static
   #
-  curl $CURL_ARGS_API "https://grafana.k3d.localhost/api/ds/query" \
+  curl $CURL_ARGS_API "https://grafana.k3d.local.profitbricks.net/api/ds/query" \
     -H 'content-type: application/json' \
     -u admin:password \
-    -H 'origin: https://grafana.k3d.localhost' \
+    -H 'origin: https://grafana.k3d.local.profitbricks.net' \
     --data-raw '{
                   "queries": [
                     {
@@ -34,10 +34,10 @@ grafana_loki_query_instant() {
 grafana_prometheus_query_instant() {
   # execute a loki metric query through grafana via an "instant" type query and
   # return the expected singular result
-  curl $CURL_ARGS_API "https://grafana.k3d.localhost/api/ds/query" \
+  curl $CURL_ARGS_API "https://grafana.k3d.local.profitbricks.net/api/ds/query" \
     -H 'content-type: application/json' \
     -u admin:password \
-    -H 'origin: https://grafana.k3d.localhost' \
+    -H 'origin: https://grafana.k3d.local.profitbricks.net' \
     --data-raw '{
                   "queries": [
                     {
@@ -54,14 +54,14 @@ grafana_prometheus_query_instant() {
 }
 
 grafana_api_call() {
-  curl $CURL_ARGS_API "https://grafana.k3d.localhost$1" \
+  curl $CURL_ARGS_API "https://grafana.k3d.local.profitbricks.net$1" \
     -H 'content-type: application/json' \
     -u admin:password \
-    -H 'origin: https://grafana.k3d.localhost'
+    -H 'origin: https://grafana.k3d.local.profitbricks.net'
 }
 
 query_loki() {
-  LOKI_ADDR=https://loki.k3d.localhost/ logcli query --quiet "$1"
+  LOKI_ADDR=https://loki.k3d.local.profitbricks.net/ logcli query --quiet "$1"
 }
 run_in_cluster() {
   image="$1"; 

@@ -9,13 +9,13 @@ spec:
   tls: {}
   routes:
     - kind: Rule
-      match: Host(`argocd.k3d.localhost`)
+      match: Host(`argocd.k3d.local.profitbricks.net`)
       priority: 10
       services:
         - name: argo-cd-argocd-server
           port: 80
     - kind: Rule
-      match: Host(`argocd.k3d.localhost`) && Headers(`Content-Type`, `application/grpc`)
+      match: Host(`argocd.k3d.local.profitbricks.net`) && Headers(`Content-Type`, `application/grpc`)
       priority: 11
       services:
         - name: argo-cd-argocd-server

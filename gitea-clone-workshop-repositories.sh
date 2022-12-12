@@ -7,9 +7,9 @@ password="password"
 
 user_auth="${username}:${password}"
 curl -H "Content-Type: application/json" \
-  -d '{"email": "'${username}'@k3d.localhost", "password": "'${password}'", "username": "'${username}'", "must_change_password": false }' \
+  -d '{"email": "'${username}'@k3d.local.profitbricks.net", "password": "'${password}'", "username": "'${username}'", "must_change_password": false }' \
   -u "${admin_auth}" \
-  https://gitea.k3d.localhost/api/v1/admin/users
+  https://gitea.k3d.local.profitbricks.net/api/v1/admin/users
 
 mirror_repository() {
   local NAME=$1
@@ -34,7 +34,7 @@ EOF
   curl -v -H "Content-Type: application/json" \
     -d "$PAYLOAD" \
     -u "${user_auth}" \
-    https://gitea.k3d.localhost/api/v1/repos/migrate
+    https://gitea.k3d.local.profitbricks.net/api/v1/repos/migrate
 }
 
 mirror_repository "service" "https://github.com/c089/devops-workshop-service.git"

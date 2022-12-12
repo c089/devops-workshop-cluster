@@ -18,7 +18,7 @@ Describe 'Service Mesh'
   AfterAll 'cleanup'
 
   It "ingress: runs traffic into service mesh"
-    When call curl -s -I "https://servicemesh-spec.k3d.localhost/bench"
+    When call curl -s -I "https://servicemesh-spec.k3d.local.profitbricks.net/bench"
     The line 1 of output should include "200"
     The output should include "server: envoy"
   End

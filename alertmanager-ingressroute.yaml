@@ -9,7 +9,7 @@ spec:
   tls: {}
   routes:
     - kind: Rule
-      match: Host(`alertmanager.k3d.localhost`)
+      match: Host(`alertmanager.k3d.local.profitbricks.net`)
       services:
         - name: kube-prometheus-stack-alertmanager
           port: 9093

@@ -8,7 +8,7 @@ serviceMonitor:
       additionalRelabeling:
         - sourceLabels: [target]
           targetLabel: __param_hostname
-          replacement: hello.k3d.localhost
+          replacement: hello.k3d.local.profitbricks.net
       interval: 1s
       scrapeTimeout: 1s
       module: http_2xx

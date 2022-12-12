@@ -9,7 +9,7 @@ spec:
   tls: {}
   routes:
     - kind: Rule
-      match: Host(`argo-rollouts.k3d.localhost`)
+      match: Host(`argo-rollouts.k3d.local.profitbricks.net`)
       priority: 10
       services:
         - name: argo-rollouts-dashboard

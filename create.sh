@@ -7,7 +7,7 @@ source "${CLUSTER_DIR}/prerequisites.sh"
 # create and install a default certificate
 keyfile=$(mktemp)
 certfile=$(mktemp)
-mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.localhost \*.k3d.localhost host.k3d.internal
+mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.local.profitbricks.net \*.k3d.local.profitbricks.net host.k3d.internal
 
 # make sure registries are up
 docker-compose -f "${CLUSTER_DIR}/local-pullthrough-registries.docker-compose.yaml" up -d
@@ -61,7 +61,7 @@ kubectl apply -f "${CLUSTER_DIR}/traefik-ingressroute.yaml"
 # create and install a default certificate
 keyfile=$(mktemp)
 certfile=$(mktemp)
-mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.localhost \*.k3d.localhost
+mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.local.profitbricks.net \*.k3d.local.profitbricks.net
 # save it as secret for traefik to find
 kubectl create secret -n kube-system tls tls-default-certificate --cert $certfile --key $keyfile
 

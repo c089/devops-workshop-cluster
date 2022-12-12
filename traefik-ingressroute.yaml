@@ -8,7 +8,7 @@ spec:
     - websecure
   tls: {}
   routes:
-    - match: Host(`traefik-dashboard.k3d.localhost`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
+    - match: Host(`traefik-dashboard.k3d.local.profitbricks.net`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))
       kind: Rule
       services:
         - name: api@internal
