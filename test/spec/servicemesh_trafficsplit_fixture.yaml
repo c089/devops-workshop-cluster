@@ -1,0 +1,136 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: trafficsplit-spec
+spec:
+  ports:
+  - port: 80
+    targetPort: spec-web
+  selector:
+    app: trafficsplit-spec
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trafficsplit-spec-stable
+spec:
+  ports:
+  - port: 80
+    targetPort: spec-web
+  selector:
+    app: trafficsplit-spec
+    version: v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trafficsplit-spec-canary
+spec:
+  ports:
+  - port: 80
+    targetPort: spec-web
+  selector:
+    app: trafficsplit-spec
+    version: v2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trafficsplit-spec-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trafficsplit-spec
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: trafficsplit-spec
+        version: v1
+      annotations:
+        'openservicemesh.io/sidecar-injection': 'enabled'
+    spec:
+      containers:
+        - image: nginx:latest
+          name: trafficsplit-spec
+          ports:
+            - containerPort: 80
+              name: spec-web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trafficsplit-spec-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trafficsplit-spec
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: trafficsplit-spec
+        version: v2
+      annotations:
+        'openservicemesh.io/sidecar-injection': 'enabled'
+    spec:
+      containers:
+        - image: traefik/whoami:latest
+          name: trafficsplit-spec
+          ports:
+            - containerPort: 80
+              name: spec-web
+---
+kind: IngressBackend
+apiVersion: policy.openservicemesh.io/v1alpha1
+metadata:
+  name: trafficsplit-spec
+spec:
+  backends:
+    - name: trafficsplit-spec
+      port:
+        number: 80
+        protocol: http
+  sources:
+    - kind: IPRange
+      name: 10.0.0.0/8
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: trafficsplit-spec
+spec:
+  entryPoints:
+    - websecure
+  tls: {}
+  routes:
+    - kind: Rule
+      match: Host(`trafficsplit-spec.k3d.localhost`)
+      services:
+        - name: trafficsplit-spec
+          port: 80
+    - kind: Rule
+      match: Host(`trafficsplit-spec-stable.k3d.localhost`)
+      services:
+        - name: trafficsplit-spec-stable
+          port: 80
+    - kind: Rule
+      match: Host(`trafficsplit-spec-canary.k3d.localhost`)
+      services:
+        - name: trafficsplit-spec-canary
+          port: 80
+---
+apiVersion: split.smi-spec.io/v1alpha2
+kind: TrafficSplit
+metadata:
+  name: trafficsplit-spec-split
+  namespace: default
+spec:
+  service: trafficsplit-spec.default.svc.cluster.local
+  backends:
+  - service: trafficsplit-spec-v1
+    weight: 0
+  - service: trafficsplit-spec-v2
+    weight: 100
