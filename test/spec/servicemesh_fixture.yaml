@@ -78,17 +78,17 @@ spec:
   tls: {}
   routes:
     - kind: Rule
-      match: Host(`servicemesh-spec.k3d.localhost`)
+      match: Host(`servicemesh-spec.k3d.local.profitbricks.net`)
       services:
         - name: servicemesh-spec
           port: 80
     - kind: Rule
-      match: Host(`servicemesh-spec-stable.k3d.localhost`)
+      match: Host(`servicemesh-spec-stable.k3d.local.profitbricks.net`)
       services:
         - name: servicemesh-spec-stable
           port: 80
     - kind: Rule
-      match: Host(`servicemesh-spec-canary.k3d.localhost`)
+      match: Host(`servicemesh-spec-canary.k3d.local.profitbricks.net`)
       services:
         - name: servicemesh-spec-canary
           port: 80
