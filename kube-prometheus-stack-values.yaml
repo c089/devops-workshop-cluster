@@ -4,6 +4,8 @@ prometheus:
     # ref: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack#prometheusioscrape
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
+    enableFeatures:
+    - remote-write-receiver
 alertmanager:
   alertmanagerSpec:
     externalUrl: "https://alertmanager.k3d.local.profitbricks.net"
