@@ -59,13 +59,6 @@ done
 kubectl delete ingressroute -n kube-system traefik-dashboard
 kubectl apply -f "${CLUSTER_DIR}/traefik-ingressroute.yaml"
 
-# create and install a default certificate
-keyfile=$(mktemp)
-certfile=$(mktemp)
-mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.local.profitbricks.net \*.k3d.local.profitbricks.net
-# save it as secret for traefik to find
-kubectl create secret -n kube-system tls tls-default-certificate --cert $certfile --key $keyfile
-
 kubectl apply -f "${CLUSTER_DIR}/kube-prometheus-stack-ingressroutes.yaml"
 # install loki and prommtail
 helm upgrade --install --atomic --create-namespace \
