@@ -107,17 +107,17 @@ spec:
   tls: {}
   routes:
     - kind: Rule
-      match: Host(`trafficsplit-spec.k3d.localhost`)
+      match: Host(`trafficsplit-spec.k3d.local.profitbricks.net`)
       services:
         - name: trafficsplit-spec
           port: 80
     - kind: Rule
-      match: Host(`trafficsplit-spec-stable.k3d.localhost`)
+      match: Host(`trafficsplit-spec-stable.k3d.local.profitbricks.net`)
       services:
         - name: trafficsplit-spec-stable
           port: 80
     - kind: Rule
-      match: Host(`trafficsplit-spec-canary.k3d.localhost`)
+      match: Host(`trafficsplit-spec-canary.k3d.local.profitbricks.net`)
       services:
         - name: trafficsplit-spec-canary
           port: 80
