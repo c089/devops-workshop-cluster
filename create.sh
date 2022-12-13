@@ -1,13 +1,14 @@
 #!/bin/bash
 set -ex
 
+DOMAIN=k3d.local.profitbricks.net
 CLUSTER_DIR=$(dirname "$0")
 source "${CLUSTER_DIR}/prerequisites.sh"
 
 # create and install a default certificate
 keyfile=$(mktemp)
 certfile=$(mktemp)
-mkcert -install -cert-file $certfile -key-file $keyfile localhost k3d.local.profitbricks.net \*.k3d.local.profitbricks.net host.k3d.internal
+mkcert -install -cert-file $certfile -key-file $keyfile localhost host.k3d.internal ${DOMAIN} \*.${DOMAIN}
 
 # make sure registries are up
 docker-compose -f "${CLUSTER_DIR}/local-pullthrough-registries.docker-compose.yaml" up -d
@@ -20,13 +21,32 @@ k3d cluster create \
   --registry-config "$CLUSTER_DIR/local-pullthrough-registries.k3d-registries.yaml" \
   --registry-create registry:0.0.0.0:5000
 
-# install openservicemesh
-OSM_MESH_NAME="osm"
-helm upgrade --install --atomic --create-namespace \
-  --namespace osm-system osm osm/osm
-kubectl label namespace default "openservicemesh.io/monitored-by=${OSM_MESH_NAME}"
-kubectl annotate namespace default "openservicemesh.io/sidecar-injection=disabled"
-kubectl apply -f envoy-podmonitor.yaml
+# Install Linkerd
+helm install linkerd-crds linkerd/linkerd-crds \
+  -n linkerd --create-namespace
+
+step-cli certificate create root.linkerd.cluster.local ca.crt ca.key \
+  --profile root-ca --no-password --insecure
+step-cli certificate create identity.linkerd.cluster.local issuer.crt issuer.key \
+  --profile intermediate-ca --not-after 8760h --no-password --insecure \
+  --ca ca.crt --ca-key ca.key
+
+helm install linkerd-control-plane \
+  -n linkerd \
+  --set-file identityTrustAnchorsPEM=ca.crt \
+  --set-file identity.issuer.tls.crtPEM=issuer.crt \
+  --set-file identity.issuer.tls.keyPEM=issuer.key \
+  linkerd/linkerd-control-plane
+
+rm ca.crt ca.key issuer.crt issuer.key
+
+helm install \
+  --namespace linkerd-viz \
+  --create-namespace \
+  --atomic \
+  linkerd-viz linkerd/linkerd-viz \
+  --set dashboard.enforcedHostRegexp="linkerd-viz.${DOMAIN}"
+kubectl apply -f linkerd-viz-ingressroute.yaml
 
 # install prometheus, alertmanager, grafana
 helm upgrade --install --atomic --create-namespace \
