@@ -26,6 +26,7 @@ helm upgrade --install --atomic --create-namespace \
   --namespace osm-system osm osm/osm
 kubectl label namespace default "openservicemesh.io/monitored-by=${OSM_MESH_NAME}"
 kubectl annotate namespace default "openservicemesh.io/sidecar-injection=disabled"
+kubectl apply -f envoy-podmonitor.yaml
 
 # install prometheus, alertmanager, grafana
 helm upgrade --install --atomic --create-namespace \

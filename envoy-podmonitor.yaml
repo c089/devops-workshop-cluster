@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: osm-controller
+  namespace: observability
+spec:
+  selector:
+    matchLabels:
+      app: osm-controller
+  namespaceSelector:
+    matchNames:
+      - osm-system
+  endpoints:
+  - targetPort: healthz
+    interval: 30s
+    path: /metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: envoy-sidecars
+  namespace: observability
+spec:
+  selector:
+    matchExpressions:
+      - key: "osm-proxy-uuid"
+        operator: Exists
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - targetPort: 15010
+    path: /stats/prometheus
