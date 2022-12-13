@@ -3,7 +3,6 @@ Include spec/support.sh
 Describe 'Service Mesh'
   CURL_POD=smoke-test-curl-$(date +%s)
   setup() {
-    ls
     kubectl apply -f "$(dirname ${SHELLSPEC_SPECFILE})/servicemesh_fixture.yaml"
     kubectl wait --for=condition=Available deployment servicemesh-spec
 
