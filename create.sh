@@ -5,12 +5,6 @@ DOMAIN=k3d.local.profitbricks.net
 CLUSTER_DIR=$(dirname "$0")
 source "${CLUSTER_DIR}/prerequisites.sh"
 
-# create and install a default certificate
-keyfile=$(mktemp)
-certfile=$(mktemp)
-mkcert -install -cert-file $certfile -key-file $keyfile localhost host.k3d.internal ${DOMAIN} \*.${DOMAIN}
-kubectl create secret -n kube-system tls tls-default-certificate --cert $certfile --key $keyfile
-
 # make sure registries are up
 docker-compose -f "${CLUSTER_DIR}/local-pullthrough-registries.docker-compose.yaml" up -d
 
@@ -21,6 +15,12 @@ k3d cluster create \
   -p "443:443@loadbalancer" \
   --registry-config "$CLUSTER_DIR/local-pullthrough-registries.k3d-registries.yaml" \
   --registry-create registry:0.0.0.0:5000
+
+# create and install a default certificate
+keyfile=$(mktemp)
+certfile=$(mktemp)
+mkcert -install -cert-file $certfile -key-file $keyfile localhost host.k3d.internal ${DOMAIN} \*.${DOMAIN}
+kubectl create secret -n kube-system tls tls-default-certificate --cert $certfile --key $keyfile
 
 # Install Linkerd
 helm install linkerd-crds linkerd/linkerd-crds \
