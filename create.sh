@@ -9,6 +9,7 @@ source "${CLUSTER_DIR}/prerequisites.sh"
 keyfile=$(mktemp)
 certfile=$(mktemp)
 mkcert -install -cert-file $certfile -key-file $keyfile localhost host.k3d.internal ${DOMAIN} \*.${DOMAIN}
+kubectl create secret -n kube-system tls tls-default-certificate --cert $certfile --key $keyfile
 
 # make sure registries are up
 docker-compose -f "${CLUSTER_DIR}/local-pullthrough-registries.docker-compose.yaml" up -d
