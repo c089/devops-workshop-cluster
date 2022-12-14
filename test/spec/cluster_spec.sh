@@ -98,15 +98,6 @@ Describe 'k3d development cluster'
       The result of "http_code()" should equal "200"
     End
 
-    It "allows argo-rollouts to manage traefikservices"
-      When run kubectl auth can-i \
-        --namespace default \
-        --as system:serviceaccount:argo-rollouts:argo-rollouts \
-        get traefikservices.traefik.containo.us
-      The status should be success
-      The output should equal "yes"
-    End
-
    It "allows argo-workflows to sync apps in argocd"
      When run argocd admin settings rbac can argo-workflows sync applications --namespace argocd
      The status should be success
