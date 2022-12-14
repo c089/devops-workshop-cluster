@@ -10,6 +10,7 @@ docker-compose -f "${CLUSTER_DIR}/local-pullthrough-registries.docker-compose.ya
 
 # create cluster
 k3d cluster create \
+  --k3s-arg "--no-deploy=traefik@server:*" \
   --agents 2 \
   -p "80:80@loadbalancer" \
   -p "443:443@loadbalancer" \
@@ -49,7 +50,6 @@ helm install \
   --atomic \
   linkerd-viz linkerd/linkerd-viz \
   --set dashboard.enforcedHostRegexp="linkerd-viz.${DOMAIN}"
-kubectl apply -f linkerd-viz-ingressroute.yaml
 
 # install prometheus, alertmanager, grafana
 helm upgrade --install --atomic --create-namespace \
@@ -58,21 +58,8 @@ helm upgrade --install --atomic --create-namespace \
 	kube-prometheus-stack prometheus-community/kube-prometheus-stack
 
 # configure traefik
-
-helm_deploy_status() {
-	helm status -o json -n kube-system traefik 2> /dev/null | jq -j '.info.status'
-}
-
-echo "waiting for traefik..."
-until [[ $(helm_deploy_status) = "deployed" ]]; do
-  echo -n "."
-	sleep 1
-done
-
-# move traefik to it's own namespace because admission webhooks are disabled in kube-system
-helm uninstall -n kube-system traefik
-
 kubectl create namespace traefik
+
 # create and install a default certificate
 keyfile=$(mktemp)
 certfile=$(mktemp)
@@ -95,6 +82,9 @@ done
 # replace traefik ingressroute
 kubectl delete ingressroute -n kube-system traefik-dashboard
 kubectl apply -f "${CLUSTER_DIR}/traefik-ingressroute.yaml"
+
+# add linkerd's ingressroute
+kubectl apply -f linkerd-viz-ingressroute.yaml
 
 kubectl apply -f "${CLUSTER_DIR}/kube-prometheus-stack-ingressroutes.yaml"
 # install loki and prommtail
