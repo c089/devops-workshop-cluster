@@ -23,6 +23,14 @@ Describe 'Service Mesh'
   BeforeAll 'setup'
   AfterAll 'cleanup'
 
+  It "passes it's own validaton"
+    When call linkerd check
+    The status should be success
+    The output should include "Status check results are √"
+    The output should include "linkerd-smi"
+    The output should include "linkerd-viz"
+  End
+
   It "ingress: runs traffic into service mesh"
     When call curl -s "https://servicemesh-spec.k3d.local.profitbricks.net"
     The status should be success
@@ -50,4 +58,27 @@ Describe 'Service Mesh'
     # todo: verify meshed pod goes through the mesh
     The output should include "200 OK"
   End
+
+  k6results=`mktemp`
+  v1_answers() {
+    grep -c "trafficsplit-spec-v1" $k6results
+  }
+  v2_answers() {
+    grep -c "trafficsplit-spec-v2" $k6results
+  }
+
+  #FIXME: hangs for some reason
+  #It "implements TrafficSplit"
+  #  kubectl apply -f "$(dirname ${SHELLSPEC_SPECFILE})/servicemesh_trafficsplit_fixture.yaml"
+  #  kubectl wait --for=condition=Available deployment servicemesh-spec
+
+  #  k6_script="$(dirname ${SHELLSPEC_SPECFILE})/servicemesh_trafficsplit_load.js"  
+  #  When run docker run --network host --rm -i \
+  #    grafana/k6 run \
+  #    --vus 100 --iterations 1000 \
+  #    --insecure-skip-tls-verify --quiet \
+  #    --out csv=- - < $k6_script | tee $k6results
+  #  The status should be success
+  #  The result of "v1_answers()" should equal 5
+  #End
 End

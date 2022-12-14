@@ -36,6 +36,13 @@ helm upgrade --install --atomic \
 
 rm ca.crt ca.key issuer.crt issuer.key
 
+# Install linkerd-smi
+helm install linkerd-smi/linkerd-smi linkerd-smi \
+  --namespace linkerd-smi \
+  --create-namespace \
+  --atomic
+
+# Install linkerd-viz
 helm install \
   --namespace linkerd-viz \
   --create-namespace \

@@ -43,6 +43,8 @@ has_helm_repo "grafana" "https://grafana.github.io/helm-charts"
 has_helm_repo "argo" "https://argoproj.github.io/argo-helm"
 has_helm_repo "gitea-charts" "https://dl.gitea.io/charts/"
 has_helm_repo "osm" "https://openservicemesh.github.io/osm"
+has_helm_repo "linkerd" "https://helm.linkerd.io/stable"
+has_helm_repo "linkerd-smi" "https://linkerd.github.io/linkerd-smi"
 
 if [ "${SHOULD_EXIT_BECAUSE_OF_MISSING_DEPENDENCY}" -ne 0 ];
 then

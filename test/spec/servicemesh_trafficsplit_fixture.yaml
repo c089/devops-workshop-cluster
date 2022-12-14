@@ -49,10 +49,10 @@ spec:
         app: trafficsplit-spec
         version: v1
       annotations:
-        'openservicemesh.io/sidecar-injection': 'enabled'
+        'linkerd.io/inject': 'enabled'
     spec:
       containers:
-        - image: nginx:latest
+        - image: traefik/whoami:latest
           name: trafficsplit-spec
           ports:
             - containerPort: 80
@@ -74,7 +74,7 @@ spec:
         app: trafficsplit-spec
         version: v2
       annotations:
-        'openservicemesh.io/sidecar-injection': 'enabled'
+        'linkerd.io/inject': 'enabled'
     spec:
       containers:
         - image: traefik/whoami:latest
@@ -82,20 +82,6 @@ spec:
           ports:
             - containerPort: 80
               name: spec-web
----
-kind: IngressBackend
-apiVersion: policy.openservicemesh.io/v1alpha1
-metadata:
-  name: trafficsplit-spec
-spec:
-  backends:
-    - name: trafficsplit-spec
-      port:
-        number: 80
-        protocol: http
-  sources:
-    - kind: IPRange
-      name: 10.0.0.0/8
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
@@ -107,20 +93,21 @@ spec:
   tls: {}
   routes:
     - kind: Rule
+      middlewares:
+        - name: trafficsplit-spec-l5-dst
       match: Host(`trafficsplit-spec.k3d.local.profitbricks.net`)
       services:
         - name: trafficsplit-spec
           port: 80
-    - kind: Rule
-      match: Host(`trafficsplit-spec-v1.k3d.local.profitbricks.net`)
-      services:
-        - name: trafficsplit-spec-v1
-          port: 80
-    - kind: Rule
-      match: Host(`trafficsplit-spec-v2.k3d.local.profitbricks.net`)
-      services:
-        - name: trafficsplit-spec-v2
-          port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: trafficsplit-spec-l5-dst
+spec:
+  headers:
+    customRequestHeaders:
+      l5d-dst-override: "trafficsplit-spec.default.svc.cluster.local:80"
 ---
 apiVersion: split.smi-spec.io/v1alpha2
 kind: TrafficSplit
@@ -128,9 +115,9 @@ metadata:
   name: trafficsplit-spec-split
   namespace: default
 spec:
-  service: trafficsplit-spec.default.svc.cluster.local
+  service: trafficsplit-spec
   backends:
   - service: trafficsplit-spec-v1
-    weight: 0
+    weight: 90
   - service: trafficsplit-spec-v2
-    weight: 100
+    weight: 10
