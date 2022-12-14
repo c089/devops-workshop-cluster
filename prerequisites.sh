@@ -2,14 +2,14 @@
 
 set -e +x
 
-SHOULD_EXIT_BECAUSE_OF_MISSING_DEPENDENCY=0
+SHOULD_EXIT_AFTER_RUNNING_OTHER_TESTS=0
 
 command_exists() {
     local COMMAND="$1"
     local INSTALL_GUIDE="$2"
     if ! command -v "$COMMAND" > /dev/null; then
 	echo "Install '${COMMAND}' ( see ${INSTALL_GUIDE} )"
-	SHOULD_EXIT_BECAUSE_OF_MISSING_DEPENDENCY=1
+	SHOULD_EXIT_AFTER_RUNNING_OTHER_TESTS=1
     fi
 }
 
@@ -21,9 +21,43 @@ has_helm_repo() {
     if [ $? -ne 0 ]
     then
         echo "helm repo add ${NAME} ${URL}"
-        SHOULD_EXIT_BECAUSE_OF_MISSING_DEPENDENCY=1
+        SHOULD_EXIT_AFTER_RUNNING_OTHER_TESTS=1
     fi
 	set -e
+}
+
+
+try_ping_host() {
+    local HOST="$1"
+    ping -c1 -q "$HOST" -W1 > /dev/null
+    local RETVAL=$?
+    if [ "$RETVAL" -ne 0 ];
+    then
+        echo "🟥 $HOST"
+        return $RETVAL
+    else
+        echo "✅ $HOST"
+        return 0
+    fi
+}
+
+can_resolve_local_domain() {
+    local DOMAIN_SUFFIX="local.profitbricks.net"
+    set +e
+    try_ping_host "gitea.k3d.$DOMAIN_SUFFIX"
+    try_ping_host "hello.k3d.$DOMAIN_SUFFIX"
+    try_ping_host "random_name.$DOMAIN_SUFFIX"
+    local RETVAL=$?
+    set -e
+
+    if [ "$RETVAL" -ne 0 ];
+    then
+        echo "Could not resolve some domains to 127.0.0.1. Your router might be preventing DNS-rebinds."
+        echo "You have the following options:"
+        echo " - Specify a DNS server that resolves hosts to 127.0.0.1, like 1.1.1.1, 8.8.8.8 or 8.8.4.4"
+        echo " - Enable DNSMasq (NetworkManager/Linux) and add a manual entry for those domains (see https://gist.github.com/ju1ius/944ad78f4db9188cd3cafc171aab8b98)"
+        SHOULD_EXIT_AFTER_RUNNING_OTHER_TESTS=1
+    fi
 }
 
 command_exists "shellspec" "https://github.com/shellspec/shellspec#installation"
@@ -46,7 +80,9 @@ has_helm_repo "osm" "https://openservicemesh.github.io/osm"
 has_helm_repo "linkerd" "https://helm.linkerd.io/stable"
 has_helm_repo "linkerd-smi" "https://linkerd.github.io/linkerd-smi"
 
-if [ "${SHOULD_EXIT_BECAUSE_OF_MISSING_DEPENDENCY}" -ne 0 ];
+can_resolve_local_domain
+
+if [ "${SHOULD_EXIT_AFTER_RUNNING_OTHER_TESTS}" -ne 0 ];
 then
     echo ""
     echo "You need to install the dependencies listed above to continue."
