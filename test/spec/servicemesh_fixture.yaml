@@ -45,7 +45,7 @@ spec:
       labels:
         app: servicemesh-spec
       annotations:
-        'openservicemesh.io/sidecar-injection': 'enabled'
+        'linkerd.io/inject': 'enabled'
     spec:
       containers:
         - image: traefik/whoami:latest
@@ -53,20 +53,6 @@ spec:
           ports:
             - containerPort: 80
               name: spec-web
----
-kind: IngressBackend
-apiVersion: policy.openservicemesh.io/v1alpha1
-metadata:
-  name: servicemesh-spec
-spec:
-  backends:
-    - name: servicemesh-spec
-      port:
-        number: 80
-        protocol: http
-  sources:
-    - kind: IPRange
-      name: 10.0.0.0/8
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
@@ -78,6 +64,8 @@ spec:
   tls: {}
   routes:
     - kind: Rule
+      middlewares:
+        - name: servicemesh-spec-header
       match: Host(`servicemesh-spec.k3d.local.profitbricks.net`)
       services:
         - name: servicemesh-spec
@@ -92,3 +80,12 @@ spec:
       services:
         - name: servicemesh-spec-canary
           port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: servicemesh-spec-header
+spec:
+  headers:
+    customRequestHeaders:
+      l5d-dst-override: "servicemesh-spec.default.svc.cluster.local:80"

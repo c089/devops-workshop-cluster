@@ -16,12 +16,6 @@ k3d cluster create \
   --registry-config "$CLUSTER_DIR/local-pullthrough-registries.k3d-registries.yaml" \
   --registry-create registry:0.0.0.0:5000
 
-# create and install a default certificate
-keyfile=$(mktemp)
-certfile=$(mktemp)
-mkcert -install -cert-file $certfile -key-file $keyfile localhost host.k3d.internal ${DOMAIN} \*.${DOMAIN}
-kubectl create secret -n kube-system tls tls-default-certificate --cert $certfile --key $keyfile
-
 # Install Linkerd
 helm install linkerd-crds linkerd/linkerd-crds \
   -n linkerd --create-namespace
@@ -32,7 +26,8 @@ step-cli certificate create identity.linkerd.cluster.local issuer.crt issuer.key
   --profile intermediate-ca --not-after 8760h --no-password --insecure \
   --ca ca.crt --ca-key ca.key
 
-helm install linkerd-control-plane \
+helm upgrade --install --atomic \
+  linkerd-control-plane \
   -n linkerd \
   --set-file identityTrustAnchorsPEM=ca.crt \
   --set-file identity.issuer.tls.crtPEM=issuer.crt \
@@ -56,6 +51,7 @@ helm upgrade --install --atomic --create-namespace \
 	kube-prometheus-stack prometheus-community/kube-prometheus-stack
 
 # configure traefik
+
 helm_deploy_status() {
 	helm status -o json -n kube-system traefik 2> /dev/null | jq -j '.info.status'
 }
@@ -66,8 +62,21 @@ until [[ $(helm_deploy_status) = "deployed" ]]; do
 	sleep 1
 done
 
-kubectl delete deployment -n kube-system traefik # workaround "cannot ugprade" issue
-helm upgrade -n kube-system --values "${CLUSTER_DIR}/traefik-values.yaml" traefik traefik/traefik
+# move traefik to it's own namespace because admission webhooks are disabled in kube-system
+helm uninstall -n kube-system traefik
+
+kubectl create namespace traefik
+# create and install a default certificate
+keyfile=$(mktemp)
+certfile=$(mktemp)
+mkcert -install -cert-file $certfile -key-file $keyfile localhost host.k3d.internal ${DOMAIN} \*.${DOMAIN}
+kubectl create secret -n traefik tls tls-default-certificate --cert $certfile --key $keyfile
+
+helm upgrade \
+  --install --atomic \
+  --namespace traefik \
+  --values "${CLUSTER_DIR}/traefik-values.yaml" \
+  traefik traefik/traefik
 
 # wait for trafik to install ingressroute crd
 echo "waiting for crd..."
