@@ -5,6 +5,8 @@ DOMAIN=k3d.local.profitbricks.net
 CLUSTER_DIR=$(dirname "$0")
 source "${CLUSTER_DIR}/prerequisites.sh"
 
+set -ex
+
 # make sure registries are up
 docker-compose -f "${CLUSTER_DIR}/local-pullthrough-registries.docker-compose.yaml" up -d
 
@@ -79,8 +81,6 @@ until kubectl get crd | grep ingressroute; do
 	sleep 1
 done
 
-# replace traefik ingressroute
-kubectl delete ingressroute -n kube-system traefik-dashboard
 kubectl apply -f "${CLUSTER_DIR}/traefik-ingressroute.yaml"
 
 # add linkerd's ingressroute
@@ -92,6 +92,7 @@ helm upgrade --install --atomic --create-namespace \
   --values "${CLUSTER_DIR}/loki-stack-values.yaml" \
 	--namespace observability \
   loki-stack grafana/loki-stack
+
 kubectl apply -f "${CLUSTER_DIR}/loki-ingressroute.yaml"
 
 # install blackbox-exporter
