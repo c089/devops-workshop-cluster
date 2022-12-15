@@ -60,6 +60,17 @@ Describe 'Service Mesh'
       # todo: verify meshed pod goes through the mesh
       The output should include "200 OK"
     End
+
+    It "integrates with prometheus"
+      number_of_results() { echo "$1" | jq '.data.result | length' ; }
+      query='sum by (status_code,dst_deployment) (response_total{job="linkerd-proxy"})'
+      When call curl \
+        'https://prometheus.k3d.local.profitbricks.net/api/v1/query' \
+        --data-urlencode "query=${query}"
+      Dump
+      The status should be success
+      The result of "number_of_results()" should satisfy formula "value > 0"
+    End
   End
 
   Describe "Traffic Splitting"

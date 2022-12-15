@@ -46,12 +46,15 @@ helm install linkerd-smi linkerd-smi/linkerd-smi \
   --atomic
 
 # Install linkerd-viz
-helm install \
+helm upgrade --install \
   --namespace linkerd-viz \
   --create-namespace \
   --atomic \
   linkerd-viz linkerd/linkerd-viz \
-  --set dashboard.enforcedHostRegexp="linkerd-viz.${DOMAIN}"
+  --set dashboard.enforcedHostRegexp="linkerd-viz.${DOMAIN}" \
+  --set prometheusUrl="http://kube-prometheus-stack-prometheus.observability:9090"
+kubectl apply -f linkerd-servicemonitor.yaml
+
 
 # install prometheus, alertmanager, grafana
 helm upgrade --install --atomic --create-namespace \
