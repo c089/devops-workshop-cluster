@@ -53,7 +53,6 @@ helm upgrade --install \
   linkerd-viz linkerd/linkerd-viz \
   --set dashboard.enforcedHostRegexp="linkerd-viz.${DOMAIN}" \
   --set prometheusUrl="http://kube-prometheus-stack-prometheus.observability:9090"
-kubectl apply -f linkerd-servicemonitor.yaml
 
 
 # install prometheus, alertmanager, grafana
@@ -61,6 +60,8 @@ helm upgrade --install --atomic --create-namespace \
 	--namespace observability \
   --values "${CLUSTER_DIR}/kube-prometheus-stack-values.yaml" \
 	kube-prometheus-stack prometheus-community/kube-prometheus-stack
+
+kubectl apply -f linkerd-servicemonitor.yaml
 
 # configure traefik
 kubectl create namespace traefik
