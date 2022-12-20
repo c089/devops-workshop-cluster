@@ -171,6 +171,7 @@ until ${CLUSTER_DIR}/test.sh -q -r; do
 done
 ${CLUSTER_DIR}/test.sh
 
+${CLUSTER_DIR}/initialize-workshop-service.sh
 
 echo "🥳 All done. Admin credentials and services:"
 ${CLUSTER_DIR}/show-credentials.sh
