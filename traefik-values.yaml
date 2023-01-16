@@ -22,3 +22,7 @@ metrics:
       enabled: true
     serviceMonitor:
       namespace: "observability"
+tracing:
+  jaeger:
+    collector:
+      endpoint: http://tempo.observability.svc.cluster.local:14268/api/traces

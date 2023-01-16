@@ -64,6 +64,12 @@ helm upgrade --install --atomic --create-namespace \
   --values "${CLUSTER_DIR}/kube-prometheus-stack-values.yaml" \
 	kube-prometheus-stack prometheus-community/kube-prometheus-stack
 
+helm upgrade --install --atomic \
+	--namespace observability \
+  --values "${CLUSTER_DIR}/grafana-tempo-values.yaml" \
+	tempo grafana/tempo
+
+
 kubectl apply -f linkerd-servicemonitor.yaml
 
 # configure traefik
