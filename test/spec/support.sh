@@ -53,6 +53,26 @@ grafana_prometheus_query_instant() {
                 }'
 }
 
+grafana_tempo_query() {
+  # execute a loki metric query through grafana via an "instant" type query and
+  # return the expected singular result
+  curl $CURL_ARGS_API  "https://grafana.k3d.local.profitbricks.net/api/ds/query" \
+    -H 'content-type: application/json' \
+    -u admin:password \
+    -H 'origin: https://grafana.k3d.local.profitbricks.net' \
+    --data-raw '{
+  "queries": [
+    {
+      "datasource": { "type": "tempo", "uid": "tempo" },
+      "queryType": "traceId",
+      "query": "'$1'"
+    }
+  ],
+  "from": "now-1h",
+  "to": "now"
+}'
+}
+
 grafana_api_call() {
   curl $CURL_ARGS_API "https://grafana.k3d.local.profitbricks.net$1" \
     -H 'content-type: application/json' \

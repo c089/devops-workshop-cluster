@@ -186,6 +186,17 @@ Describe 'k3d development cluster'
       The output should satisfy formula "value > 0"
     End
 
+    It "can query a tempo span"
+      grafana_found_results() { jq -r  '.results.A.frames | length' ; }
+      trace_id="$(openssl rand -hex 6)00badcafe"
+      header="${trace_id}:bad:0:1"
+      curl $CURL_ARGS_API https://prometheus.k3d.local.profitbricks.net/api/v1/alerts -H "Uber-Trace-ID: ${header}" -o /dev/null
+      sleep 1s
+      When call grafana_tempo_query "${trace_id}"
+      The status should be success
+      The result of "grafana_found_results()" should equal "1"
+    End
+
     It "has Prometheus configured datasource"
       When call grafana_api_call '/api/datasources'
       The status should be success
