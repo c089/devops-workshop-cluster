@@ -7,3 +7,6 @@ mirrors:
     endpoint:
       - "http://host.k3d.internal:5002"
       - "https://quay.io"
+  "registry.k3d.local.profitbricks.net:5000":
+    endpoint:
+      - "http://registry:5000"

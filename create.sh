@@ -19,6 +19,9 @@ k3d cluster create \
   --registry-config "$CLUSTER_DIR/local-pullthrough-registries.k3d-registries.yaml" \
   --registry-create registry:0.0.0.0:5000
 
+# create DNS rewrite so registry.k3d.local.profitbricks.net resolves to the registry
+kubectl apply -f "${CLUSTER_DIR}/registry-dns-entry.yaml"
+
 # Install Linkerd
 helm install linkerd-crds linkerd/linkerd-crds \
   -n linkerd --create-namespace

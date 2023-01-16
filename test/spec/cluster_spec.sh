@@ -29,18 +29,16 @@ Describe 'k3d development cluster'
     }
     After 'cleanup'
 
-    It "is accessible to workloads in the cluster"
+    It "is accessible to workloads in the cluster using the same hostname"
 
-      registry_name="registry"
-      local_tag="localhost:5000/busybox:latest"
-      cluster_tag="${registry_name}:5000/busybox:latest"
+      tag="registry.k3d.local.profitbricks.net:5000/busybox:latest"
 
       docker pull busybox:latest
-      docker tag busybox:latest ${local_tag}
-      docker push ${local_tag}
+      docker tag busybox:latest ${tag}
+      docker push ${tag}
 
       pod_name="cluster-smoke-test-$(date +%s)"
-      When call run_in_cluster ${cluster_tag} "${pod_name}" /bin/echo woop!
+      When call run_in_cluster ${tag} "${pod_name}" /bin/echo woop!
       The status should be success
       The output should include "woop!"
     End
