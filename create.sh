@@ -70,7 +70,7 @@ helm upgrade --install --atomic \
 	tempo grafana/tempo
 
 
-kubectl apply -f linkerd-servicemonitor.yaml
+kubectl apply -f "${CLUSTER_DIR}/linkerd-servicemonitor.yaml"
 
 # configure traefik
 kubectl create namespace traefik
