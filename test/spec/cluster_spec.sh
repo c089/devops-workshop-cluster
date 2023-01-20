@@ -188,9 +188,13 @@ Describe 'k3d development cluster'
 
     It "can query a tempo span"
       grafana_found_results() { jq -r  '.results.A.frames | length' ; }
-      trace_id="$(openssl rand -hex 6)00badcafe"
-      header="${trace_id}:bad:0:1"
-      curl $CURL_ARGS_API https://prometheus.k3d.local.profitbricks.net/api/v1/alerts -H "Uber-Trace-ID: ${header}" -o /dev/null
+      trace_id="cafe$(openssl rand -hex 4)"
+      span_id="cafe$(openssl rand -hex 4)"
+      curl $CURL_ARGS_API https://prometheus.k3d.local.profitbricks.net/api/v1/alerts \
+        -H "X-B3-TraceId: ${trace_id}" \
+        -H "X-B3-SpanId: ${span_id}" \
+        -H "X-B3-Sampled: 1" \
+        -o /dev/null
       sleep 1s
       When call grafana_tempo_query "${trace_id}"
       The status should be success
