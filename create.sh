@@ -68,6 +68,7 @@ helm upgrade --install --atomic \
 	--namespace observability \
   --values "${CLUSTER_DIR}/grafana-tempo-values.yaml" \
 	tempo grafana/tempo
+kubectl apply -f "${CLUSTER_DIR}/grafana-tempo-datasource.yaml"
 
 
 kubectl apply -f "${CLUSTER_DIR}/linkerd-servicemonitor.yaml"

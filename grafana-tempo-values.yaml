@@ -1,2 +1,4 @@
 tempo:
   searchEnabled: true
+  receivers:
+    zipkin:
