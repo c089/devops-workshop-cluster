@@ -1,9 +1,0 @@
-gitea:
-  admin:
-    username: gitea_admin
-    password: password
-  config:
-    server:
-      ROOT_URL: https://gitea.k3d.local.profitbricks.net/
-    webhook:
-      ALLOWED_HOST_LIST: "*.cluster.local"

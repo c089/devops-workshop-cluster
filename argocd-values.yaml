@@ -1,8 +1,0 @@
-configs:
-  params:
-    "server.insecure": true
-  secret:
-    # Password: password
-    # See https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml#L426
-    argocdServerAdminPassword: $2a$10$9ISN3HZP7JfP5mK0M.PE3u/nCpKJTb9OA3PxjbRiRfaDa5EhwY/5G
-

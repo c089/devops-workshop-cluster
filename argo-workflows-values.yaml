@@ -1,6 +1,0 @@
-server:
-  extraArgs:
-    - --auth-mode=server
-workflow:
-  serviceAccount:
-    create: true
